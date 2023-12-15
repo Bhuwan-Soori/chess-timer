@@ -50,7 +50,7 @@ const SelectTime = ({
       onClose={() => setOpen(false)}
       aria-describedby="alert-dialog-slide-description"
     >
-      <DialogTitle variant="body1" component="p">
+      <DialogTitle variant="h5" component="h5">
         {"Set Timer"}
       </DialogTitle>
       <DialogContent className={classes.content}>
