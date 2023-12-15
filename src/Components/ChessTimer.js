@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import SelectTime from "./SelectTime";
+import clickSound from "../assets/click-sound.mp3";
 
 const useStyles = makeStyles({
   root: {
@@ -104,11 +105,15 @@ const ChessTimer = () => {
   const handleTopBox = useCallback(() => {
     setDecreaseTopTime(false);
     setDecreaseBottomTime(true);
+    const audio = new Audio(clickSound);
+    audio.play();
   }, []);
 
   const handleBottomBox = useCallback(() => {
     setDecreaseBottomTime(false);
     setDecreaseTopTime(true);
+    const audio = new Audio(clickSound);
+    audio.play();
   }, []);
 
   useEffect(() => {
