@@ -1,19 +1,18 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
-import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import dayjs from "dayjs";
-import { makeStyles } from "@mui/styles";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { useDispatch, useSelector } from "react-redux";
 import {
   setTime1,
   setTime2,
@@ -38,10 +37,10 @@ const useStyles = makeStyles({
 const SelectTime = ({
   open,
   setOpen,
-  topTime,
-  setTopTime,
-  bottomTime,
-  setBottomTime,
+  whiteTime,
+  setWhiteTime,
+  blackTime,
+  setBlackTime,
   setEditTimer,
 }) => {
   const classes = useStyles();
@@ -50,16 +49,16 @@ const SelectTime = ({
   const time = useSelector((state) => state.chessTimer.time);
   // convert top time to viewable format
   let defaultTopTime = new Date();
-  defaultTopTime.setMinutes(Math.floor((topTime % 3600) / 60));
-  defaultTopTime.setSeconds(topTime % 60);
+  defaultTopTime.setMinutes(Math.floor((whiteTime % 3600) / 60));
+  defaultTopTime.setSeconds(whiteTime % 60);
 
-  //   convert bottom time to viewable format
+  // convert bottom time to viewable format
   let defaultBottomTime = new Date();
-  defaultBottomTime.setMinutes(Math.floor((bottomTime % 3600) / 60));
-  defaultBottomTime.setSeconds(bottomTime % 60);
+  defaultBottomTime.setMinutes(Math.floor((blackTime % 3600) / 60));
+  defaultBottomTime.setSeconds(blackTime % 60);
 
   const handleClose = () => {
-    if (topTime === 0 || bottomTime === 0) {
+    if (whiteTime === 0 || blackTime === 0) {
       alert("Time should not be zero.");
     } else {
       setEditTimer(false);
@@ -93,7 +92,7 @@ const SelectTime = ({
                       if (!isNaN(minutes) && !isNaN(seconds)) {
                         let fullSeconds = minutes * 60 + seconds;
                         dispatch(setTime1(fullSeconds));
-                        setTopTime(fullSeconds);
+                        setWhiteTime(fullSeconds);
                       }
                     }}
                     views={["minutes", "seconds"]}
@@ -111,7 +110,7 @@ const SelectTime = ({
                       let seconds = date.getSeconds();
                       if (!isNaN(minutes) && !isNaN(seconds)) {
                         let fullSeconds = minutes * 60 + seconds;
-                        setBottomTime(fullSeconds);
+                        setBlackTime(fullSeconds);
                         dispatch(setTime2(fullSeconds));
                       }
                     }}
@@ -124,6 +123,8 @@ const SelectTime = ({
           </Grid>
           <Grid item xs={12}>
             <TextField
+              fullWidth
+              select
               id="outlined-basic"
               label="Game Mode"
               variant="outlined"
@@ -137,8 +138,6 @@ const SelectTime = ({
                   dispatch(setGameMode(e.target.value));
                 }
               }}
-              fullWidth
-              select
             >
               <MenuItem value="default">Default</MenuItem>
               <MenuItem value="increment">Increment</MenuItem>

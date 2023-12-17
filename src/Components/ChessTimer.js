@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -91,8 +91,8 @@ const ChessTimer = () => {
 
   const [editTimer, setEditTimer] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
-  const [topTime, setTopTime] = useState(time1);
-  const [bottomTime, setBottomTime] = useState(time2);
+  const [whiteTime, setWhiteTime] = useState(time1);
+  const [blackTime, setBlackTime] = useState(time2);
   const [decreaseTopTime, setDecreaseTopTime] = useState(false);
   const [decreaseBottomTime, setDecreaseBottomTime] = useState(false);
   const [lessTopTime, setLessTopTime] = useState(false);
@@ -101,7 +101,6 @@ const ChessTimer = () => {
   const formattedTime = useCallback((time) => {
     const minutes = Math.floor((time % 3600) / 60);
     const seconds = time % 60;
-
     const formattedMinutes = `${minutes.toString().padStart(2, "0")}:`;
     const formattedSeconds = seconds.toString().padStart(2, "0");
 
@@ -113,8 +112,8 @@ const ChessTimer = () => {
   }, []);
 
   const handleReset = useCallback(() => {
-    setTopTime(time1);
-    setBottomTime(time2);
+    setWhiteTime(time1);
+    setBlackTime(time2);
     setDecreaseTopTime(false);
     setDecreaseBottomTime(false);
   }, [time1, time2]);
@@ -123,67 +122,67 @@ const ChessTimer = () => {
     setDecreaseTopTime(false);
     setDecreaseBottomTime(true);
     if (gameMode === "default") {
-      if (topTime >= 10) {
+      if (whiteTime >= 10) {
         new Audio(clickSound).play();
-      } else if (topTime > 0 && topTime <= 9) {
+      } else if (whiteTime > 0 && whiteTime <= 9) {
         new Audio(beepSound).play();
       }
     } else if (gameMode === "increment") {
-      if (topTime >= 10) {
+      if (whiteTime >= 10) {
         new Audio(clickSound).play();
-      } else if (topTime > 0 && topTime <= 9) {
+      } else if (whiteTime > 0 && whiteTime <= 9) {
         new Audio(beepSound).play();
       }
-      setTopTime((prevTime) => prevTime + Number(time));
+      setWhiteTime((prevTime) => prevTime + Number(time));
     } else if (gameMode === "decrement") {
-      if (topTime >= 10) {
+      if (whiteTime >= 10) {
         new Audio(clickSound).play();
-      } else if (topTime > 0 && topTime <= 9) {
+      } else if (whiteTime > 0 && whiteTime <= 9) {
         new Audio(beepSound).play();
       }
-      if (topTime > Number(time)) {
-        setTopTime((prevTime) => prevTime - Number(time));
-      } else if (topTime <= time) {
-        setTopTime(0);
+      if (whiteTime > Number(time)) {
+        setWhiteTime((prevTime) => prevTime - Number(time));
+      } else if (whiteTime <= time) {
+        setWhiteTime(0);
       }
     }
-  }, [topTime, gameMode, time]);
+  }, [whiteTime, gameMode, time]);
 
   const handleBottomBox = useCallback(() => {
     setDecreaseBottomTime(false);
     setDecreaseTopTime(true);
     if (gameMode === "default") {
-      if (bottomTime >= 10) {
+      if (blackTime >= 10) {
         new Audio(clickSound).play();
-      } else if (bottomTime > 0 && bottomTime <= 9) {
+      } else if (blackTime > 0 && blackTime <= 9) {
         new Audio(beepSound).play();
       }
     } else if (gameMode === "increment") {
-      if (bottomTime >= 10) {
+      if (blackTime >= 10) {
         new Audio(clickSound).play();
-      } else if (bottomTime > 0 && bottomTime <= 9) {
+      } else if (blackTime > 0 && blackTime <= 9) {
         new Audio(beepSound).play();
       }
-      setBottomTime((prevTime) => prevTime + Number(time));
+      setBlackTime((prevTime) => prevTime + Number(time));
     } else if (gameMode === "decrement") {
-      if (bottomTime >= 10) {
+      if (blackTime >= 10) {
         new Audio(clickSound).play();
-      } else if (bottomTime > 0 && bottomTime <= 9) {
+      } else if (blackTime > 0 && blackTime <= 9) {
         new Audio(beepSound).play();
       }
-      if (bottomTime > Number(time)) {
-        setBottomTime((prevTime) => prevTime - Number(time));
-      } else if (bottomTime <= time) {
-        setBottomTime(0);
+      if (blackTime > Number(time)) {
+        setBlackTime((prevTime) => prevTime - Number(time));
+      } else if (blackTime <= time) {
+        setBlackTime(0);
       }
     }
-  }, [bottomTime]);
+  }, [blackTime, gameMode, time]);
 
   const handleDisableStart = () => {
     if (decreaseTopTime || decreaseBottomTime) {
       return true;
     } else if (!decreaseBottomTime || !decreaseTopTime) {
-      if (topTime === 0 || bottomTime === 0) {
+      if (whiteTime === 0 || blackTime === 0) {
         return true;
       } else {
         return false;
@@ -193,35 +192,35 @@ const ChessTimer = () => {
 
   useEffect(() => {
     let timer;
-    if (decreaseTopTime && topTime >= 0) {
+    if (decreaseTopTime && whiteTime >= 0) {
       timer = setTimeout(() => {
-        setTopTime((prevTime) => prevTime - 1);
+        setWhiteTime((prevTime) => prevTime - 1);
       }, 1000);
-    } else if (decreaseBottomTime && bottomTime >= 0) {
+    } else if (decreaseBottomTime && blackTime >= 0) {
       timer = setTimeout(() => {
-        setBottomTime((prevTime) => prevTime - 1);
+        setBlackTime((prevTime) => prevTime - 1);
       }, 1000);
     }
     return () => clearTimeout(timer);
-  }, [decreaseTopTime, topTime, decreaseBottomTime, bottomTime]);
+  }, [decreaseTopTime, whiteTime, decreaseBottomTime, blackTime]);
 
   useEffect(() => {
     if (!editTimer) {
-      if (topTime >= 10) {
+      if (whiteTime >= 10) {
         setLessTopTime(false);
-      } else if (topTime > 0 && topTime <= 9) {
+      } else if (whiteTime > 0 && whiteTime <= 9) {
         setLessTopTime(true);
-      } else if (topTime === 0) {
+      } else if (whiteTime === 0) {
         setLessTopTime(true);
         setDecreaseTopTime(false);
         setDecreaseBottomTime(false);
         new Audio(finalBeepSound).play();
       }
-      if (bottomTime >= 10) {
+      if (blackTime >= 10) {
         setLessBottomTime(false);
-      } else if (bottomTime > 0 && bottomTime <= 9) {
+      } else if (blackTime > 0 && blackTime <= 9) {
         setLessBottomTime(true);
-      } else if (bottomTime === 0) {
+      } else if (blackTime === 0) {
         setLessBottomTime(true);
         setDecreaseBottomTime(false);
         setDecreaseTopTime(false);
@@ -230,8 +229,8 @@ const ChessTimer = () => {
     }
   }, [
     editTimer,
-    topTime,
-    bottomTime,
+    whiteTime,
+    blackTime,
     lessTopTime,
     lessBottomTime,
     decreaseBottomTime,
@@ -258,7 +257,7 @@ const ChessTimer = () => {
             }
             onClick={handleTopBox}
           >
-            <Typography variant="h1">{formattedTime(topTime)}</Typography>
+            <Typography variant="h1">{formattedTime(whiteTime)}</Typography>
           </Box>
         </Grid>
         <Grid item xs={12} className={classes.item}>
@@ -297,7 +296,7 @@ const ChessTimer = () => {
             }
             onClick={handleBottomBox}
           >
-            <Typography variant="h1">{formattedTime(bottomTime)}</Typography>
+            <Typography variant="h1">{formattedTime(blackTime)}</Typography>
           </Box>
         </Grid>
       </Grid>
@@ -305,10 +304,10 @@ const ChessTimer = () => {
         <SelectTime
           open={openMenu}
           setOpen={setOpenMenu}
-          topTime={topTime}
-          setTopTime={setTopTime}
-          bottomTime={bottomTime}
-          setBottomTime={setBottomTime}
+          whiteTime={whiteTime}
+          setWhiteTime={setWhiteTime}
+          blackTime={blackTime}
+          setBlackTime={setBlackTime}
           setEditTimer={setEditTimer}
         />
       )}
