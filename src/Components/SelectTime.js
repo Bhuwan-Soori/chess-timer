@@ -22,6 +22,9 @@ import {
 } from "../Redux/chessTimerSlice";
 
 const useStyles = makeStyles({
+  title: {
+    color: "#2e7d32",
+  },
   content: {
     padding: "20px 30px !important",
     display: "flex",
@@ -39,6 +42,7 @@ const SelectTime = ({
   setTopTime,
   bottomTime,
   setBottomTime,
+  setEditTimer,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -54,6 +58,14 @@ const SelectTime = ({
   defaultBottomTime.setMinutes(Math.floor((bottomTime % 3600) / 60));
   defaultBottomTime.setSeconds(bottomTime % 60);
 
+  const handleClose = () => {
+    if (topTime === 0 || bottomTime === 0) {
+      alert("Time should not be zero.");
+    } else {
+      setEditTimer(false);
+      setOpen(false);
+    }
+  };
   return (
     <Dialog
       open={open}
@@ -61,8 +73,8 @@ const SelectTime = ({
       onClose={() => setOpen(false)}
       aria-describedby="alert-dialog-slide-description"
     >
-      <DialogTitle variant="h5" component="h5">
-        {"Set Timer"}
+      <DialogTitle variant="h5" component="h5" className={classes.title}>
+        Set Timer
       </DialogTitle>
       <DialogContent className={classes.content}>
         <Grid container spacing={2} direction="column" justifyContent="center">
@@ -149,12 +161,8 @@ const SelectTime = ({
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={() => setOpen(false)}
-        >
-          Save
+        <Button variant="contained" color="error" onClick={handleClose}>
+          Close
         </Button>
       </DialogActions>
     </Dialog>
