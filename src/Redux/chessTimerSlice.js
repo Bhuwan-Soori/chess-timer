@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   time1: 300,
   time2: 300,
+  gameMode: "default",
+  time: 0,
 };
 
 const chessTimerSlice = createSlice({
@@ -15,9 +17,16 @@ const chessTimerSlice = createSlice({
     setTime2: (state, action) => {
       state.time2 = action.payload;
     },
+    setGameMode: (state, action) => {
+      state.gameMode = action.payload;
+    },
+    setTime: (state, action) => {
+      state.time = action.payload;
+    },
   },
 });
 
-export const { setTime1, setTime2 } = chessTimerSlice.actions;
+export const { setTime1, setTime2, setGameMode, setTime } =
+  chessTimerSlice.actions;
 
 export default chessTimerSlice.reducer;
