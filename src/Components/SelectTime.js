@@ -48,14 +48,14 @@ const SelectTime = ({
   const gameMode = useSelector((state) => state.chessTimer.gameMode);
   const time = useSelector((state) => state.chessTimer.time);
   // convert top time to viewable format
-  let defaultTopTime = new Date();
-  defaultTopTime.setMinutes(Math.floor((whiteTime % 3600) / 60));
-  defaultTopTime.setSeconds(whiteTime % 60);
+  let defaultWhiteTime = new Date();
+  defaultWhiteTime.setMinutes(Math.floor((whiteTime % 3600) / 60));
+  defaultWhiteTime.setSeconds(whiteTime % 60);
 
   // convert bottom time to viewable format
-  let defaultBottomTime = new Date();
-  defaultBottomTime.setMinutes(Math.floor((blackTime % 3600) / 60));
-  defaultBottomTime.setSeconds(blackTime % 60);
+  let defaultBlackTime = new Date();
+  defaultBlackTime.setMinutes(Math.floor((blackTime % 3600) / 60));
+  defaultBlackTime.setSeconds(blackTime % 60);
 
   const handleClose = () => {
     if (whiteTime === 0 || blackTime === 0) {
@@ -84,7 +84,7 @@ const SelectTime = ({
                   <TimePicker
                     label={"White"}
                     ampm={false}
-                    value={dayjs(defaultTopTime)}
+                    value={dayjs(defaultWhiteTime)}
                     onChange={(value, context) => {
                       let date = new Date(value);
                       let minutes = date.getMinutes();
@@ -103,7 +103,7 @@ const SelectTime = ({
                   <TimePicker
                     label={"Black"}
                     ampm={false}
-                    value={dayjs(defaultBottomTime)}
+                    value={dayjs(defaultBlackTime)}
                     onChange={(value, context) => {
                       let date = new Date(value);
                       let minutes = date.getMinutes();

@@ -20,13 +20,14 @@ const useStyles = makeStyles({
   item: {
     padding: "5px",
   },
-  topBox: {
+  whiteBox: {
     color: "#434343",
     height: "40vh",
     background: "#f2f2f2",
     border: "1px solid #ddd",
     boxShadow: "2px 2px 20px #ddd",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
@@ -34,13 +35,14 @@ const useStyles = makeStyles({
     opacity: "0.8",
     pointerEvents: "none",
   },
-  bottomBox: {
+  blackBox: {
     color: "#f2f2f2",
     height: "40vh",
     background: "#434343",
     border: "1px solid #ddd",
     boxShadow: "2px 2px 20px #ddd",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
@@ -55,6 +57,7 @@ const useStyles = makeStyles({
     border: "1px solid #ddd",
     boxShadow: "2px 2px 20px #ddd",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
@@ -67,6 +70,7 @@ const useStyles = makeStyles({
     border: "1px solid #d9534f",
     boxShadow: "2px 2px 20px #444",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
@@ -93,10 +97,12 @@ const ChessTimer = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const [whiteTime, setWhiteTime] = useState(time1);
   const [blackTime, setBlackTime] = useState(time2);
-  const [decreaseTopTime, setDecreaseTopTime] = useState(false);
-  const [decreaseBottomTime, setDecreaseBottomTime] = useState(false);
-  const [lessTopTime, setLessTopTime] = useState(false);
-  const [lessBottomTime, setLessBottomTime] = useState(false);
+  const [whiteSteps, setWhiteSteps] = useState(0);
+  const [blackSteps, setBlackSteps] = useState(0);
+  const [decreaseWhiteTime, setDecreaseWhiteTime] = useState(false);
+  const [decreaseBlackTime, setDecreaseBlackTime] = useState(false);
+  const [lessWhiteTime, setLessWhiteTime] = useState(false);
+  const [lessBlackTime, setLessBlackTime] = useState(false);
 
   const formattedTime = useCallback((time) => {
     const minutes = Math.floor((time % 3600) / 60);
@@ -108,38 +114,30 @@ const ChessTimer = () => {
   }, []);
 
   const handleStart = useCallback(() => {
-    setDecreaseTopTime(true);
+    setDecreaseWhiteTime(true);
   }, []);
 
   const handleReset = useCallback(() => {
     setWhiteTime(time1);
     setBlackTime(time2);
-    setDecreaseTopTime(false);
-    setDecreaseBottomTime(false);
+    setDecreaseWhiteTime(false);
+    setDecreaseBlackTime(false);
+    setWhiteSteps(0);
+    setBlackSteps(0);
   }, [time1, time2]);
 
-  const handleTopBox = useCallback(() => {
-    setDecreaseTopTime(false);
-    setDecreaseBottomTime(true);
-    if (gameMode === "default") {
-      if (whiteTime >= 10) {
-        new Audio(clickSound).play();
-      } else if (whiteTime > 0 && whiteTime <= 9) {
-        new Audio(beepSound).play();
-      }
-    } else if (gameMode === "increment") {
-      if (whiteTime >= 10) {
-        new Audio(clickSound).play();
-      } else if (whiteTime > 0 && whiteTime <= 9) {
-        new Audio(beepSound).play();
-      }
+  const handleWhiteBox = useCallback(() => {
+    setDecreaseWhiteTime(false);
+    setDecreaseBlackTime(true);
+    setWhiteSteps((prev) => prev + 1);
+    if (whiteTime >= 10) {
+      new Audio(clickSound).play();
+    } else {
+      new Audio(beepSound).play();
+    }
+    if (gameMode === "increment") {
       setWhiteTime((prevTime) => prevTime + Number(time));
     } else if (gameMode === "decrement") {
-      if (whiteTime >= 10) {
-        new Audio(clickSound).play();
-      } else if (whiteTime > 0 && whiteTime <= 9) {
-        new Audio(beepSound).play();
-      }
       if (whiteTime > Number(time)) {
         setWhiteTime((prevTime) => prevTime - Number(time));
       } else if (whiteTime <= time) {
@@ -148,28 +146,18 @@ const ChessTimer = () => {
     }
   }, [whiteTime, gameMode, time]);
 
-  const handleBottomBox = useCallback(() => {
-    setDecreaseBottomTime(false);
-    setDecreaseTopTime(true);
-    if (gameMode === "default") {
-      if (blackTime >= 10) {
-        new Audio(clickSound).play();
-      } else if (blackTime > 0 && blackTime <= 9) {
-        new Audio(beepSound).play();
-      }
-    } else if (gameMode === "increment") {
-      if (blackTime >= 10) {
-        new Audio(clickSound).play();
-      } else if (blackTime > 0 && blackTime <= 9) {
-        new Audio(beepSound).play();
-      }
+  const handleBlackBox = useCallback(() => {
+    setDecreaseBlackTime(false);
+    setDecreaseWhiteTime(true);
+    setBlackSteps((prev) => prev + 1);
+    if (blackTime >= 10) {
+      new Audio(clickSound).play();
+    } else {
+      new Audio(beepSound).play();
+    }
+    if (gameMode === "increment") {
       setBlackTime((prevTime) => prevTime + Number(time));
     } else if (gameMode === "decrement") {
-      if (blackTime >= 10) {
-        new Audio(clickSound).play();
-      } else if (blackTime > 0 && blackTime <= 9) {
-        new Audio(beepSound).play();
-      }
       if (blackTime > Number(time)) {
         setBlackTime((prevTime) => prevTime - Number(time));
       } else if (blackTime <= time) {
@@ -179,9 +167,9 @@ const ChessTimer = () => {
   }, [blackTime, gameMode, time]);
 
   const handleDisableStart = () => {
-    if (decreaseTopTime || decreaseBottomTime) {
+    if (decreaseWhiteTime || decreaseBlackTime) {
       return true;
-    } else if (!decreaseBottomTime || !decreaseTopTime) {
+    } else if (!decreaseBlackTime || !decreaseWhiteTime) {
       if (whiteTime === 0 || blackTime === 0) {
         return true;
       } else {
@@ -192,38 +180,38 @@ const ChessTimer = () => {
 
   useEffect(() => {
     let timer;
-    if (decreaseTopTime && whiteTime >= 0) {
+    if (decreaseWhiteTime && whiteTime >= 0) {
       timer = setTimeout(() => {
         setWhiteTime((prevTime) => prevTime - 1);
       }, 1000);
-    } else if (decreaseBottomTime && blackTime >= 0) {
+    } else if (decreaseBlackTime && blackTime >= 0) {
       timer = setTimeout(() => {
         setBlackTime((prevTime) => prevTime - 1);
       }, 1000);
     }
     return () => clearTimeout(timer);
-  }, [decreaseTopTime, whiteTime, decreaseBottomTime, blackTime]);
+  }, [decreaseWhiteTime, whiteTime, decreaseBlackTime, blackTime]);
 
   useEffect(() => {
     if (!editTimer) {
       if (whiteTime >= 10) {
-        setLessTopTime(false);
+        setLessWhiteTime(false);
       } else if (whiteTime > 0 && whiteTime <= 9) {
-        setLessTopTime(true);
+        setLessWhiteTime(true);
       } else if (whiteTime === 0) {
-        setLessTopTime(true);
-        setDecreaseTopTime(false);
-        setDecreaseBottomTime(false);
+        setLessWhiteTime(true);
+        setDecreaseWhiteTime(false);
+        setDecreaseBlackTime(false);
         new Audio(finalBeepSound).play();
       }
       if (blackTime >= 10) {
-        setLessBottomTime(false);
+        setLessBlackTime(false);
       } else if (blackTime > 0 && blackTime <= 9) {
-        setLessBottomTime(true);
+        setLessBlackTime(true);
       } else if (blackTime === 0) {
-        setLessBottomTime(true);
-        setDecreaseBottomTime(false);
-        setDecreaseTopTime(false);
+        setLessBlackTime(true);
+        setDecreaseBlackTime(false);
+        setDecreaseWhiteTime(false);
         new Audio(finalBeepSound).play();
       }
     }
@@ -231,10 +219,10 @@ const ChessTimer = () => {
     editTimer,
     whiteTime,
     blackTime,
-    lessTopTime,
-    lessBottomTime,
-    decreaseBottomTime,
-    decreaseTopTime,
+    lessWhiteTime,
+    lessBlackTime,
+    decreaseBlackTime,
+    decreaseWhiteTime,
   ]);
 
   return (
@@ -249,15 +237,18 @@ const ChessTimer = () => {
         <Grid item xs={12} className={classes.item}>
           <Box
             className={
-              !decreaseTopTime
-                ? classes.topBox
-                : !lessTopTime
+              !decreaseWhiteTime
+                ? classes.whiteBox
+                : !lessWhiteTime
                 ? classes.selectedBox
                 : classes.lessTimeBox
             }
-            onClick={handleTopBox}
+            onClick={handleWhiteBox}
           >
             <Typography variant="h1">{formattedTime(whiteTime)}</Typography>
+            <Typography variant="body1" component="p">
+              Steps: {whiteSteps}
+            </Typography>
           </Box>
         </Grid>
         <Grid item xs={12} className={classes.item}>
@@ -288,15 +279,18 @@ const ChessTimer = () => {
         <Grid item xs={12} className={classes.item}>
           <Box
             className={
-              !decreaseBottomTime
-                ? classes.bottomBox
-                : !lessBottomTime
+              !decreaseBlackTime
+                ? classes.blackBox
+                : !lessBlackTime
                 ? classes.selectedBox
                 : classes.lessTimeBox
             }
-            onClick={handleBottomBox}
+            onClick={handleBlackBox}
           >
             <Typography variant="h1">{formattedTime(blackTime)}</Typography>
+            <Typography variant="body1" component="p">
+              Steps: {blackSteps}
+            </Typography>
           </Box>
         </Grid>
       </Grid>
