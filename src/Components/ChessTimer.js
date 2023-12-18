@@ -247,7 +247,7 @@ const ChessTimer = () => {
           >
             <Typography variant="h1">{formattedTime(whiteTime)}</Typography>
             <Typography variant="body1" component="p">
-              Steps: {whiteSteps}
+              Moves: {whiteSteps}
             </Typography>
           </Box>
         </Grid>
@@ -289,7 +289,7 @@ const ChessTimer = () => {
           >
             <Typography variant="h1">{formattedTime(blackTime)}</Typography>
             <Typography variant="body1" component="p">
-              Steps: {blackSteps}
+              Moves: {blackSteps}
             </Typography>
           </Box>
         </Grid>

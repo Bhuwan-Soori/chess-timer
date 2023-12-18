@@ -153,15 +153,17 @@ const SelectTime = ({
                 label="Time"
                 value={time}
                 variant="outlined"
-                onChange={(e) => dispatch(setTime(e.target.value))}
+                onChange={(e) => {
+                  dispatch(setTime(e.target.value));
+                }}
               />
             </Grid>
           )}
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" color="error" onClick={handleClose}>
-          Close
+        <Button variant="contained" color="success" onClick={handleClose}>
+          Save
         </Button>
       </DialogActions>
     </Dialog>
