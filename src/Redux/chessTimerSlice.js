@@ -5,6 +5,8 @@ const initialState = {
   time2: 300,
   gameMode: "default",
   time: 0,
+  whiteColor: "#f2f2f2",
+  blackColor: "#434343",
 };
 
 const chessTimerSlice = createSlice({
@@ -23,10 +25,22 @@ const chessTimerSlice = createSlice({
     setTime: (state, action) => {
       state.time = action.payload;
     },
+    setWhiteColor: (state, action) => {
+      state.whiteColor = action.payload;
+    },
+    setBlackColor: (state, action) => {
+      state.blackColor = action.payload;
+    },
   },
 });
 
-export const { setTime1, setTime2, setGameMode, setTime } =
-  chessTimerSlice.actions;
+export const {
+  setTime1,
+  setTime2,
+  setGameMode,
+  setTime,
+  setWhiteColor,
+  setBlackColor,
+} = chessTimerSlice.actions;
 
 export default chessTimerSlice.reducer;

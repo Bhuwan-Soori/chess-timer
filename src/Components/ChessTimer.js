@@ -9,6 +9,7 @@ import SelectTime from "./SelectTime";
 import clickSound from "../assets/click-sound.mp3";
 import beepSound from "../assets/beep-sound.mp3";
 import finalBeepSound from "../assets/final-beep-sound.mp3";
+import ColorPickerComponent from "./ColorPicker";
 
 const useStyles = makeStyles({
   root: {
@@ -21,9 +22,7 @@ const useStyles = makeStyles({
     padding: "5px",
   },
   whiteBox: {
-    color: "#434343",
-    height: "40vh",
-    background: "#f2f2f2",
+    height: "45vh",
     border: "1px solid #ddd",
     boxShadow: "2px 2px 20px #ddd",
     display: "flex",
@@ -32,13 +31,11 @@ const useStyles = makeStyles({
     alignItems: "center",
     cursor: "pointer",
     borderRadius: "6px",
-    opacity: "0.8",
+    opacity: "0.5",
     pointerEvents: "none",
   },
   blackBox: {
-    color: "#f2f2f2",
-    height: "40vh",
-    background: "#434343",
+    height: "45vh",
     border: "1px solid #ddd",
     boxShadow: "2px 2px 20px #ddd",
     display: "flex",
@@ -47,13 +44,12 @@ const useStyles = makeStyles({
     alignItems: "center",
     cursor: "pointer",
     borderRadius: "6px",
-    opacity: "0.8",
+    opacity: "0.5",
     pointerEvents: "none",
   },
   selectedBox: {
-    color: "#f2f2f2",
-    height: "40vh",
-    background: "green",
+    height: "45vh",
+    opacity: "1",
     border: "1px solid #ddd",
     boxShadow: "2px 2px 20px #ddd",
     display: "flex",
@@ -64,10 +60,8 @@ const useStyles = makeStyles({
     borderRadius: "6px",
   },
   lessTimeBox: {
-    color: "white",
-    height: "40vh",
-    background: "#d9534f",
-    border: "1px solid #d9534f",
+    height: "45vh",
+    border: "none",
     boxShadow: "2px 2px 20px #444",
     display: "flex",
     flexDirection: "column",
@@ -92,9 +86,12 @@ const ChessTimer = () => {
   const time2 = useSelector((state) => state.chessTimer.time2);
   const gameMode = useSelector((state) => state.chessTimer.gameMode);
   const time = useSelector((state) => state.chessTimer.time);
+  const whiteColor = useSelector((state) => state.chessTimer.whiteColor);
+  const blackColor = useSelector((state) => state.chessTimer.blackColor);
 
   const [editTimer, setEditTimer] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
+  const [openColorPicker, setOpenColorPicker] = useState(false);
   const [whiteTime, setWhiteTime] = useState(time1);
   const [blackTime, setBlackTime] = useState(time2);
   const [whiteSteps, setWhiteSteps] = useState(0);
@@ -178,6 +175,14 @@ const ChessTimer = () => {
     }
   };
 
+  const handleDisableTimer = () => {
+    if (decreaseWhiteTime || decreaseBlackTime) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   useEffect(() => {
     let timer;
     if (decreaseWhiteTime && whiteTime >= 0) {
@@ -225,6 +230,26 @@ const ChessTimer = () => {
     decreaseWhiteTime,
   ]);
 
+  useEffect(() => {
+    let elements = document.querySelectorAll(".invert-color");
+    function getInvertedColor(color) {
+      let rgb = color.match(/\d+/g);
+      let invertedRgb = rgb.map(function (component) {
+        return 255 - parseInt(component, 10);
+      });
+      let invertedColor = "rgb(" + invertedRgb.join(",") + ")";
+      return invertedColor;
+    }
+    elements.forEach(function (element) {
+      let parentBackgroundColor = window.getComputedStyle(
+        element.parentElement
+      ).backgroundColor;
+
+      let invertedColor = getInvertedColor(parentBackgroundColor);
+      element.style.color = invertedColor;
+    });
+  }, [whiteColor, blackColor]);
+
   return (
     <>
       <Grid
@@ -243,10 +268,21 @@ const ChessTimer = () => {
                 ? classes.selectedBox
                 : classes.lessTimeBox
             }
+            style={{
+              background: `${
+                !decreaseWhiteTime
+                  ? whiteColor
+                  : !lessWhiteTime
+                  ? whiteColor
+                  : "#d9534f"
+              }`,
+            }}
             onClick={handleWhiteBox}
           >
-            <Typography variant="h1">{formattedTime(whiteTime)}</Typography>
-            <Typography variant="body1" component="p">
+            <Typography variant="h1" className="invert-color">
+              {formattedTime(whiteTime)}
+            </Typography>
+            <Typography variant="body1" component="p" className="invert-color">
               Moves: {whiteSteps}
             </Typography>
           </Box>
@@ -267,12 +303,23 @@ const ChessTimer = () => {
             <Button
               variant="contained"
               color="info"
+              disabled={handleDisableTimer()}
               onClick={() => {
                 setEditTimer(true);
                 setOpenMenu(true);
               }}
             >
               Timer
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={decreaseWhiteTime || decreaseBlackTime}
+              onClick={() => {
+                setOpenColorPicker(true);
+              }}
+            >
+              Theme
             </Button>
           </Box>
         </Grid>
@@ -285,10 +332,21 @@ const ChessTimer = () => {
                 ? classes.selectedBox
                 : classes.lessTimeBox
             }
+            style={{
+              background: `${
+                !decreaseBlackTime
+                  ? blackColor
+                  : !lessBlackTime
+                  ? blackColor
+                  : "#d9534f"
+              }`,
+            }}
             onClick={handleBlackBox}
           >
-            <Typography variant="h1">{formattedTime(blackTime)}</Typography>
-            <Typography variant="body1" component="p">
+            <Typography variant="h1" className="invert-color">
+              {formattedTime(blackTime)}
+            </Typography>
+            <Typography variant="body1" component="p" className="invert-color">
               Moves: {blackSteps}
             </Typography>
           </Box>
@@ -303,6 +361,12 @@ const ChessTimer = () => {
           blackTime={blackTime}
           setBlackTime={setBlackTime}
           setEditTimer={setEditTimer}
+        />
+      )}
+      {openColorPicker && (
+        <ColorPickerComponent
+          open={openColorPicker}
+          setOpen={setOpenColorPicker}
         />
       )}
     </>

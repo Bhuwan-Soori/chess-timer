@@ -69,7 +69,7 @@ const SelectTime = ({
     <Dialog
       open={open}
       keepMounted
-      onClose={() => setOpen(false)}
+      disableEscapeKeyDown={true}
       aria-describedby="alert-dialog-slide-description"
     >
       <DialogTitle variant="h5" component="h5" className={classes.title}>
