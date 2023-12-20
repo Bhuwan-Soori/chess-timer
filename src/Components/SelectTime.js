@@ -170,4 +170,4 @@ const SelectTime = ({
   );
 };
 
-export default SelectTime;
+export default React.memo(SelectTime);

@@ -1,15 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import SelectTime from "./SelectTime";
 import clickSound from "../assets/click-sound.mp3";
 import beepSound from "../assets/beep-sound.mp3";
 import finalBeepSound from "../assets/final-beep-sound.mp3";
-import ColorPickerComponent from "./ColorPicker";
+
+const SelectTime = lazy(() => import("./SelectTime"));
+const ColorPickerComponent = lazy(() => import("./ColorPicker"));
 
 const useStyles = makeStyles({
   root: {
@@ -353,24 +354,28 @@ const ChessTimer = () => {
         </Grid>
       </Grid>
       {openMenu && (
-        <SelectTime
-          open={openMenu}
-          setOpen={setOpenMenu}
-          whiteTime={whiteTime}
-          setWhiteTime={setWhiteTime}
-          blackTime={blackTime}
-          setBlackTime={setBlackTime}
-          setEditTimer={setEditTimer}
-        />
+        <Suspense fallback={<></>}>
+          <SelectTime
+            open={openMenu}
+            setOpen={setOpenMenu}
+            whiteTime={whiteTime}
+            setWhiteTime={setWhiteTime}
+            blackTime={blackTime}
+            setBlackTime={setBlackTime}
+            setEditTimer={setEditTimer}
+          />
+        </Suspense>
       )}
       {openColorPicker && (
-        <ColorPickerComponent
-          open={openColorPicker}
-          setOpen={setOpenColorPicker}
-        />
+        <Suspense fallback={<></>}>
+          <ColorPickerComponent
+            open={openColorPicker}
+            setOpen={setOpenColorPicker}
+          />
+        </Suspense>
       )}
     </>
   );
 };
 
-export default ChessTimer;
+export default React.memo(ChessTimer);
