@@ -280,11 +280,20 @@ const ChessTimer = () => {
             }}
             onClick={handleWhiteBox}
           >
-            <Typography variant="h1" className="invert-color">
-              {formattedTime(whiteTime)}
-            </Typography>
-            <Typography variant="body1" component="p" className="invert-color">
+            <Typography
+              variant="body1"
+              component="p"
+              className="invert-color"
+              style={{ transform: "rotate(180deg)" }}
+            >
               Moves: {whiteSteps}
+            </Typography>
+            <Typography
+              variant="h1"
+              className="invert-color"
+              style={{ transform: "rotate(180deg)" }}
+            >
+              {formattedTime(whiteTime)}
             </Typography>
           </Box>
         </Grid>
@@ -293,17 +302,24 @@ const ChessTimer = () => {
             <Button
               variant="contained"
               color="success"
+              size="small"
               onClick={handleStart}
               disabled={handleDisableStart()}
             >
               Start
             </Button>
-            <Button variant="contained" color="error" onClick={handleReset}>
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              onClick={handleReset}
+            >
               Reset
             </Button>
             <Button
               variant="contained"
               color="info"
+              size="small"
               disabled={handleDisableTimer()}
               onClick={() => {
                 setEditTimer(true);
@@ -315,6 +331,7 @@ const ChessTimer = () => {
             <Button
               variant="contained"
               color="secondary"
+              size="small"
               disabled={decreaseWhiteTime || decreaseBlackTime}
               onClick={() => {
                 setOpenColorPicker(true);
