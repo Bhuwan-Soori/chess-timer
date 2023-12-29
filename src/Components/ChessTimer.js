@@ -13,63 +13,77 @@ const SelectTime = lazy(() => import("./SelectTime"));
 const ColorPickerComponent = lazy(() => import("./ColorPicker"));
 
 const useStyles = makeStyles({
-  root: {
+  wrapper: {
     background: "#fafafa",
+    width: "100%",
+    height: "100vh",
+    margin: "0px !important",
+  },
+  timeUp: {
+    animationName: "$timeFinish",
+    animationDuration: "0.2s",
+    animationDelay: "0.2s",
+    animationIterationCount: 10,
+  },
+  root: {
     color: "white",
     height: "100vh",
     margin: "0px !important",
   },
+
   item: {
-    padding: "5px",
+    padding: "5px 10px",
   },
   whiteBox: {
-    height: "45vh",
-    border: "1px solid #ddd",
-    boxShadow: "2px 2px 20px #ddd",
+    height: "46vh",
+    border: "none",
+    boxShadow: "0px 0px 2px 1px #ddd",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
     borderRadius: "6px",
-    opacity: "0.5",
     pointerEvents: "none",
+    transition: "all 0.25s",
   },
   blackBox: {
-    height: "45vh",
-    border: "1px solid #ddd",
-    boxShadow: "2px 2px 20px #ddd",
+    height: "46vh",
+    border: "none",
     display: "flex",
+    boxShadow: "0px 0px 2px 1px #ddd",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
     borderRadius: "6px",
-    opacity: "0.5",
     pointerEvents: "none",
+    transition: "all 0.25s",
   },
   selectedBox: {
-    height: "45vh",
+    height: "46vh",
     opacity: "1",
-    border: "1px solid #ddd",
-    boxShadow: "2px 2px 20px #ddd",
+    border: "none",
+    boxShadow: "0px 0px 2px 1px #ddd",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
     borderRadius: "6px",
+    transition: "all 0.25s",
   },
   lessTimeBox: {
-    height: "45vh",
+    height: "46vh",
     border: "none",
-    boxShadow: "2px 2px 20px #444",
+    boxShadow: "0px 0px 2px 1px #ddd",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     cursor: "pointer",
     borderRadius: "6px",
+    transition: "all 0.25s",
   },
   controllers: {
     color: "white",
@@ -78,6 +92,17 @@ const useStyles = makeStyles({
     alignItems: "center",
     gap: "10px",
     borderRadius: "6px",
+  },
+  "@keyframes timeFinish": {
+    "0%": {
+      background: "#fafafa",
+    },
+    "50%": {
+      background: "red",
+    },
+    "100%": {
+      background: "#fafafa",
+    },
   },
 });
 
@@ -164,7 +189,7 @@ const ChessTimer = () => {
     }
   }, [blackTime, gameMode, time]);
 
-  const handleDisableStart = () => {
+  const handleDisableButtons = () => {
     if (decreaseWhiteTime || decreaseBlackTime) {
       return true;
     } else if (!decreaseBlackTime || !decreaseWhiteTime) {
@@ -173,14 +198,6 @@ const ChessTimer = () => {
       } else {
         return false;
       }
-    }
-  };
-
-  const handleDisableTimer = () => {
-    if (decreaseWhiteTime || decreaseBlackTime) {
-      return true;
-    } else {
-      return false;
     }
   };
 
@@ -258,7 +275,9 @@ const ChessTimer = () => {
         direction="row"
         alignItems="center"
         justifyContent="center"
-        className={classes.root}
+        className={
+          whiteTime === 0 || blackTime === 0 ? classes.timeUp : classes.wrapper
+        }
       >
         <Grid item xs={12} className={classes.item}>
           <Box
@@ -270,12 +289,26 @@ const ChessTimer = () => {
                 : classes.lessTimeBox
             }
             style={{
-              background: `${
+              backgroundColor: `${
                 !decreaseWhiteTime
                   ? whiteColor
                   : !lessWhiteTime
                   ? whiteColor
                   : "#d9534f"
+              }`,
+              transform: `${
+                !decreaseWhiteTime
+                  ? "scale(1.0)"
+                  : !lessWhiteTime
+                  ? "scale(1.01)"
+                  : "scale(1.01)"
+              }`,
+              boxShadow: `${
+                !decreaseWhiteTime
+                  ? "none"
+                  : !lessWhiteTime
+                  ? "0px 0px 10px 4px #888"
+                  : "0px 0px 10px 4px #888"
               }`,
             }}
             onClick={handleWhiteBox}
@@ -304,7 +337,7 @@ const ChessTimer = () => {
               color="success"
               size="small"
               onClick={handleStart}
-              disabled={handleDisableStart()}
+              disabled={handleDisableButtons()}
             >
               Start
             </Button>
@@ -320,7 +353,7 @@ const ChessTimer = () => {
               variant="contained"
               color="info"
               size="small"
-              disabled={handleDisableTimer()}
+              disabled={handleDisableButtons()}
               onClick={() => {
                 setEditTimer(true);
                 setOpenMenu(true);
@@ -332,7 +365,7 @@ const ChessTimer = () => {
               variant="contained"
               color="secondary"
               size="small"
-              disabled={decreaseWhiteTime || decreaseBlackTime}
+              disabled={handleDisableButtons()}
               onClick={() => {
                 setOpenColorPicker(true);
               }}
@@ -357,6 +390,20 @@ const ChessTimer = () => {
                   : !lessBlackTime
                   ? blackColor
                   : "#d9534f"
+              }`,
+              transform: `${
+                !decreaseBlackTime
+                  ? "scale(1.0)"
+                  : !lessBlackTime
+                  ? "scale(1.01)"
+                  : "scale(1.01)"
+              }`,
+              boxShadow: `${
+                !decreaseBlackTime
+                  ? "none"
+                  : !lessBlackTime
+                  ? "0px 0px 10px 4px #888"
+                  : "0px 0px 10px 4px #888"
               }`,
             }}
             onClick={handleBlackBox}
