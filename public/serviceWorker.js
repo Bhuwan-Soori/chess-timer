@@ -1,8 +1,6 @@
 const CACHE_NAME = "version-1.0.0";
 const urlsToCache = ["index.html", "offline.html"];
 
-const self = this;
-
 // Install SW
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -16,8 +14,11 @@ self.addEventListener("install", (event) => {
 // Listen to Requests
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then(() => {
-      return fetch(event.request).catch(() => caches.match("offline.html"));
+    caches.match(event.request).then((response) => {
+      return (
+        response ||
+        fetch(event.request).catch(() => caches.match("offline.html"))
+      );
     })
   );
 });
