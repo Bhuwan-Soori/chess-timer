@@ -1,12 +1,30 @@
-const CACHE_NAME = "version-1.0.0";
-const urlsToCache = ["index.html", "offline.html"];
+const CACHE_NAME = "version-1.0.1";
+const urlsToCache = ["/", "index.html", "offline.html", "manifest.json"];
+
+// Function to filter URLs based on file extension
+function shouldCache(url) {
+  const extensionsToCache = [".css", ".js", ".html", ".json"];
+  const urlLowercase = url.toLowerCase();
+  return extensionsToCache.some((ext) => urlLowercase.endsWith(ext));
+}
 
 // Install SW
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log("Opened cache");
-      return cache.addAll(urlsToCache);
+      // Fetch and cache assets dynamically
+      return Promise.all(
+        urlsToCache.map((url) => {
+          return fetch(url)
+            .then((response) => {
+              if (shouldCache(url) && response.ok) {
+                return cache.put(url, response);
+              }
+            })
+            .catch((error) => console.error("Failed to fetch", error));
+        })
+      );
     })
   );
 });
@@ -15,18 +33,32 @@ self.addEventListener("install", (event) => {
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return (
-        response ||
-        fetch(event.request).catch(() => caches.match("offline.html"))
-      );
+      // If the request is in the cache, return the cached version
+      if (response) {
+        return response;
+      }
+
+      // Otherwise, fetch from the network and cache the response
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // Check if the response is valid and cache it for future use
+          if (shouldCache(event.request.url) && networkResponse.ok) {
+            const clonedResponse = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, clonedResponse);
+            });
+          }
+
+          return networkResponse;
+        })
+        .catch(() => caches.match("offline.html")); // Return offline page if network request fails
     })
   );
 });
 
 // Activate SW
 self.addEventListener("activate", (event) => {
-  const cacheWhitelist = [];
-  cacheWhitelist.push(CACHE_NAME);
+  const cacheWhitelist = [CACHE_NAME];
 
   event.waitUntil(
     caches.keys().then((cacheNames) =>
