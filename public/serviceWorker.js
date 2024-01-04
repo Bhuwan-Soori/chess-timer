@@ -1,4 +1,4 @@
-const CACHE_NAME = "version-1.0.2";
+const CACHE_NAME = "version-1.0.1";
 const urlsToCache = ["/", "index.html", "offline.html", "manifest.json"];
 
 // Function to filter URLs based on file extension
@@ -51,10 +51,7 @@ self.addEventListener("fetch", (event) => {
 
           return networkResponse;
         })
-        .catch(() => {
-          // If network fetch fails, attempt to serve the requested resource from the cache
-          return caches.match(event.request);
-        });
+        .catch(() => caches.match("offline.html")); // Return offline page if network request fails
     })
   );
 });
