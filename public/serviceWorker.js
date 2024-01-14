@@ -1,5 +1,18 @@
 const CACHE_NAME = "version-1.0.1";
-const urlsToCache = ["/", "index.html", "offline.html", "manifest.json"];
+const urlsToCache = [
+  "/",
+  "index.html",
+  "offline.html",
+  "manifest.json",
+  "../src/assets/beep-sound.mp3",
+  "../src/assets/click-sound.mp3",
+  "../src/assets/final-beep-sound.mp3",
+  "../Components/ChessTimer.js",
+  "../Components/ColorPicker.js",
+  "../Components/SelectTime.js",
+  "../App.js",
+  "../App.css",
+];
 
 // Function to filter URLs based on file extension
 function shouldCache(url) {
