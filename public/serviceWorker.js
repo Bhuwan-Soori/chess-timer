@@ -12,7 +12,6 @@ function shouldCache(url) {
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("Opened cache");
       // Fetch and cache assets dynamically
       return Promise.all(
         urlsToCache.map((url) => {
@@ -29,6 +28,7 @@ self.addEventListener("install", (event) => {
   );
 });
 
+// Listen to Requests
 // Listen to Requests
 self.addEventListener("fetch", (event) => {
   event.respondWith(
@@ -51,7 +51,7 @@ self.addEventListener("fetch", (event) => {
 
           return networkResponse;
         })
-        .catch(() => caches.match("offline.html")); // Return offline page if network request fails
+        .catch(() => caches.match("index.html")); // Return cached index.html if network request fails
     })
   );
 });
